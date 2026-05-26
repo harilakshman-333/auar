@@ -1,0 +1,31 @@
+{
+    "project": {
+        "id": "PRJ-2025-047",
+        "name": "Walthamstow Plot 3 – Unit A",
+        "client": "Blackhorse Road Housing Ltd",
+        "site_address": "12 Blackhorse Road, London E17",
+        "site_foreman": "Marcus Webb"
+    },
+    "panels": [
+        { "id": "EW-L1-N1", "type": "external_wall", "level": 1, "zone": "north", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 148, "install_sequence": 1, "delivery_day": 1, "notes": "Corner panel – must be plumb before EW-L1-N2 is set" },
+        { "id": "EW-L1-N2", "type": "external_wall", "level": 1, "zone": "north", "width_mm": 2400, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 98, "install_sequence": 2, "delivery_day": 1, "notes": "Window opening – reduced weight" },
+        { "id": "EW-L1-E1", "type": "external_wall", "level": 1, "zone": "east", "width_mm": 4800, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 192, "install_sequence": 3, "delivery_day": 1, "notes": "" },
+        { "id": "EW-L1-S1", "type": "external_wall", "level": 1, "zone": "south", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 148, "install_sequence": 4, "delivery_day": 1, "notes": "Corner panel – must be plumb before EW-L1-S2 is set" },
+        { "id": "EW-L1-S2", "type": "external_wall", "level": 1, "zone": "south", "width_mm": 2400, "height_mm": 2100, "thickness_mm": 184, "weight_kg": 78, "install_sequence": 5, "delivery_day": 1, "notes": "Front door opening – reduced height 2100mm" },
+        { "id": "EW-L1-W1", "type": "external_wall", "level": 1, "zone": "west", "width_mm": 4800, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 192, "install_sequence": 6, "delivery_day": 1, "notes": "" },
+        { "id": "IW-L1-01", "type": "internal_wall", "level": 1, "zone": "internal", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 90, "weight_kg": 85, "install_sequence": 7, "delivery_day": 1, "notes": "Load bearing – structural sign-off required before install" },
+        { "id": "IW-L1-02", "type": "internal_wall", "level": 1, "zone": "internal", "width_mm": 2400, "height_mm": 2700, "thickness_mm": 90, "weight_kg": 58, "install_sequence": 8, "delivery_day": 1, "notes": "" },
+        { "id": "IW-L1-03", "type": "internal_wall", "level": 1, "zone": "internal", "width_mm": 1800, "height_mm": 2700, "thickness_mm": 90, "weight_kg": 44, "install_sequence": 9, "delivery_day": 1, "notes": "Utility room partition" },
+        { "id": "FC-01", "type": "floor_cassette", "level": 1, "zone": "floor", "width_mm": 1200, "height_mm": 350, "thickness_mm": 5200, "weight_kg": 218, "install_sequence": 10, "delivery_day": 2, "notes": "Spans east-west – do not deliver before all L1 external walls are installed and inspected" },
+        { "id": "FC-02", "type": "floor_cassette", "level": 1, "zone": "floor", "width_mm": 1200, "height_mm": 350, "thickness_mm": 5200, "weight_kg": 218, "install_sequence": 11, "delivery_day": 2, "notes": "Spans east-west" },
+        { "id": "FC-03", "type": "floor_cassette", "level": 1, "zone": "floor", "width_mm": 1200, "height_mm": 350, "thickness_mm": 5200, "weight_kg": 218, "install_sequence": 12, "delivery_day": 2, "notes": "Spans east-west" },
+        { "id": "EW-L2-N1", "type": "external_wall", "level": 2, "zone": "north", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 148, "install_sequence": 13, "delivery_day": 2, "notes": "Corner panel" },
+        { "id": "EW-L2-N2", "type": "external_wall", "level": 2, "zone": "north", "width_mm": 2400, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 98, "install_sequence": 14, "delivery_day": 2, "notes": "Bedroom window opening" },
+        { "id": "EW-L2-E1", "type": "external_wall", "level": 2, "zone": "east", "width_mm": 4800, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 192, "install_sequence": 15, "delivery_day": 2, "notes": "" },
+        { "id": "EW-L2-S1", "type": "external_wall", "level": 2, "zone": "south", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 148, "install_sequence": 16, "delivery_day": 2, "notes": "Corner panel" },
+        { "id": "EW-L2-W1", "type": "external_wall", "level": 2, "zone": "west", "width_mm": 4800, "height_mm": 2700, "thickness_mm": 184, "weight_kg": 192, "install_sequence": 17, "delivery_day": null, "notes": "Delivery day TBC – awaiting structural engineer sign-off on L1 floor" },
+        { "id": "IW-L2-01", "type": "internal_wall", "level": 2, "zone": "internal", "width_mm": 3600, "height_mm": 2700, "thickness_mm": 90, "weight_kg": 85, "install_sequence": 18, "delivery_day": null, "notes": "Load bearing" },
+        { "id": "IW-L2-02", "type": "internal_wall", "level": 2, "zone": "internal", "width_mm": 1800, "height_mm": 2700, "thickness_mm": 90, "weight_kg": 44, "install_sequence": 19, "delivery_day": null, "notes": "" },
+        { "id": "RF-01", "type": "roof_panel", "level": 2, "zone": "roof", "width_mm": 6000, "height_mm": 200, "thickness_mm": 1400, "weight_kg": 235, "install_sequence": 20, "delivery_day": null, "notes": "Flat roof – mechanical lifting required. Must be last panel installed." }
+    ]
+}
