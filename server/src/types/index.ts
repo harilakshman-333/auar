@@ -4,7 +4,7 @@
 
 export type PanelType = 'external_wall' | 'internal_wall' | 'floor_cassette' | 'roof_panel';
 export type PanelZone = 'north' | 'south' | 'east' | 'west' | 'internal' | 'floor' | 'roof';
-export type PanelStatus = 'pending' | 'stacked' | 'installed' | 'damaged';
+export type PanelStatus = 'pending' | 'stacked' | 'installed' | 'damaged' | 'on_order';
 
 export interface Panel {
   id: string;                 // e.g., 'EW-L1-N1'
@@ -19,6 +19,8 @@ export interface Panel {
   delivery_day: number | null;
   notes: string;
   status: PanelStatus;
+  is_replacement?: boolean;         // True if this panel was commissioned to replace a damaged one
+  replaces_panel_id?: string;       // ID of the original damaged panel this replaces
 }
 
 export interface Stack {

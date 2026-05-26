@@ -1,12 +1,22 @@
 // ──────────────────────────────────────────────
 // Production Manager — Panel Inventory Table
-// Shows all panels and their statuses
+// Shows all panels, statuses, dependencies, and replacements
 // ──────────────────────────────────────────────
 
 import type { Panel } from '../../types';
 
+interface DependencyInfo {
+  locked: boolean;
+  reason: string;
+  blockedBy: string[];
+}
+
+interface EnrichedPanel extends Panel {
+  dependency?: DependencyInfo;
+}
+
 interface PanelInventoryProps {
-  panels: Panel[];
+  panels: EnrichedPanel[];
 }
 
 function getStatusBadgeClass(status: string): string {
@@ -15,6 +25,7 @@ function getStatusBadgeClass(status: string): string {
     case 'stacked': return 'badge--stacked';
     case 'installed': return 'badge--installed';
     case 'damaged': return 'badge--damaged';
+    case 'on_order': return 'badge--on-order';
     default: return '';
   }
 }
@@ -26,6 +37,7 @@ export default function PanelInventory({ panels }: PanelInventoryProps) {
     stacked: panels.filter(p => p.status === 'stacked').length,
     installed: panels.filter(p => p.status === 'installed').length,
     damaged: panels.filter(p => p.status === 'damaged').length,
+    onOrder: panels.filter(p => p.status === 'on_order').length,
   };
 
   return (
@@ -51,6 +63,12 @@ export default function PanelInventory({ panels }: PanelInventoryProps) {
               {stats.damaged} Damaged
             </span>
           )}
+          {stats.onOrder > 0 && (
+            <span className="inventory__stat">
+              <span className="inventory__stat-dot inventory__stat-dot--on-order" />
+              {stats.onOrder} On Order
+            </span>
+          )}
         </div>
       </div>
 
@@ -69,25 +87,51 @@ export default function PanelInventory({ panels }: PanelInventoryProps) {
             </tr>
           </thead>
           <tbody>
-            {panels.map((panel) => (
-              <tr key={panel.id} className={panel.status === 'damaged' ? 'inventory__row--damaged' : ''}>
-                <td className="inventory__seq">{panel.install_sequence}</td>
-                <td className="inventory__id">{panel.id}</td>
-                <td>{panel.type.replace('_', ' ')}</td>
-                <td>{panel.zone}</td>
-                <td>L{panel.level}</td>
-                <td>{panel.weight_kg}kg</td>
-                <td>{panel.delivery_day ?? '—'}</td>
-                <td>
-                  <span className={`badge ${getStatusBadgeClass(panel.status)}`}>
-                    {panel.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {panels.map((panel) => {
+              const isLocked = panel.dependency?.locked ?? false;
+              const isDamaged = panel.status === 'damaged';
+              const isReplacement = panel.is_replacement;
+
+              let rowClass = '';
+              if (isDamaged) rowClass = 'inventory__row--damaged';
+              else if (isLocked) rowClass = 'inventory__row--locked';
+
+              return (
+                <tr key={panel.id} className={rowClass}>
+                  <td className="inventory__seq">{panel.install_sequence}</td>
+                  <td className="inventory__id">
+                    {isLocked && <span className="inventory__lock-icon" title={panel.dependency?.reason}>🔒 </span>}
+                    {panel.id}
+                    {isReplacement && (
+                      <span className="inventory__replacement-tag" title={`Replaces ${panel.replaces_panel_id}`}>
+                        ↩ {panel.replaces_panel_id}
+                      </span>
+                    )}
+                  </td>
+                  <td>{panel.type.replace('_', ' ')}</td>
+                  <td>{panel.zone}</td>
+                  <td>L{panel.level}</td>
+                  <td>{panel.weight_kg}kg</td>
+                  <td>{panel.delivery_day ?? '—'}</td>
+                  <td>
+                    <span className={`badge ${getStatusBadgeClass(panel.status)}`}>
+                      {panel.status === 'on_order' ? 'on order' : panel.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
+      {/* Dependency legend */}
+      {panels.some(p => p.dependency?.locked) && (
+        <div className="inventory__dep-legend">
+          <span className="inventory__lock-icon">🔒</span>
+          <span>Locked panels are waiting for prerequisite installations before they can be delivered.</span>
+        </div>
+      )}
     </div>
   );
 }

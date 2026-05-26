@@ -50,7 +50,9 @@ export default function FramerDashboard() {
 
   // Derived state for the currently selected day
   const dayPanelIds = stacks.flatMap((s) => s.panelIds);
-  const dayPanels = panels.filter((p) => dayPanelIds.includes(p.id));
+  const dayPanels = panels
+    .filter((p) => dayPanelIds.includes(p.id))
+    .sort((a, b) => a.install_sequence - b.install_sequence);
 
   // Sync focused index if entering assembly mode and not set
   useEffect(() => {
@@ -133,12 +135,20 @@ export default function FramerDashboard() {
     );
   }
 
-  if (stage === 'complete') {
+  const allPanelsInstalled = panels.every(
+    (p) => p.status === 'installed' || p.status === 'damaged'
+  );
+
+  if (stage === 'complete' || (stage === 'assembly' && totalRemaining === 0)) {
     return (
       <div className="framer-dashboard framer-dashboard--complete" id="framer-complete">
         <div className="complete__icon">🏗️</div>
-        <h1>All Panels Installed</h1>
-        <p>Great work! All panels for this project have been installed.</p>
+        <h1>{allPanelsInstalled ? 'All Panels Installed' : `Day ${deliveryDay} Complete`}</h1>
+        <p>
+          {allPanelsInstalled
+            ? 'Great work! All panels for this project have been installed.'
+            : `All deliverable panels for Day ${deliveryDay} have been installed.`}
+        </p>
         <button
           className="framer-dashboard__back"
           onClick={() => {
@@ -156,12 +166,30 @@ export default function FramerDashboard() {
   if (stage === 'assembly' && focusedIndex !== null && dayPanels[focusedIndex]) {
     const currentPanel = dayPanels[focusedIndex];
 
-    // Check if any panel in the current day's delivery stacks is reported as damaged
-    const damagedPanelsInDay = dayPanels.filter(
-      (p) => p.status === 'damaged'
+    // Calculate the next globally required sequence (lowest uninstalled sequence)
+    const installedSeqs = new Set(
+      panels.filter((p) => p.status === 'installed').map((p) => p.install_sequence)
+    );
+    const allSeqs = panels.map((p) => p.install_sequence);
+    const minSeq = allSeqs.length > 0 ? Math.min(...allSeqs) : 1;
+    const maxSeq = allSeqs.length > 0 ? Math.max(...allSeqs) : 1;
+    let globalNextSeq = minSeq;
+    for (let seq = minSeq; seq <= maxSeq; seq++) {
+      if (!installedSeqs.has(seq)) {
+        globalNextSeq = seq;
+        break;
+      }
+    }
+
+    // We are blocked if the current panel comes after the next globally required sequence
+    const isBlocked = currentPanel.install_sequence > globalNextSeq;
+
+    // Find any damaged panels globally that are blocking the current sequence
+    const blockingDamagedPanels = panels.filter(
+      (p) => p.status === 'damaged' && p.install_sequence < currentPanel.install_sequence
     );
 
-    if (damagedPanelsInDay.length > 0) {
+    if (isBlocked && totalRemaining > 0) {
       return (
         <div className="framer-dashboard">
           <button
@@ -175,27 +203,27 @@ export default function FramerDashboard() {
           </button>
           <div className="assembly-blocked">
             <div className="assembly-blocked__icon">⚠️</div>
-            <h2>Assembly Blocked</h2>
-            <p>
-              The following panel(s) in today's delivery have been reported as <strong>DAMAGED</strong>:
+            <h2 className="assembly-blocked__title" style={{ color: '#f3f4f6', fontSize: '1.5rem', margin: '16px 0 8px' }}>Assembly Blocked</h2>
+            <p className="assembly-blocked__text" style={{ color: '#9ca3af', marginBottom: '20px' }}>
+              You cannot install <strong>{currentPanel.id}</strong> (Sequence #{currentPanel.install_sequence}) yet. 
+              The project is waiting for Sequence #{globalNextSeq} to be installed first.
             </p>
-            <div className="assembly-blocked__list">
-              {damagedPanelsInDay.map((p) => (
-                <div key={p.id} className="assembly-blocked__item">
-                  <span>
-                    <strong>{p.id}</strong> (Sequence #{p.install_sequence})
-                  </span>
-                  <button
-                    className="assembly-blocked__undo-btn"
-                    onClick={() => handleResetStatus(p.id)}
-                  >
-                    Undo / Reset to Stacked
-                  </button>
-                </div>
-              ))}
-            </div>
-            <p className="assembly-blocked__note">
-              Please notify the Production Manager to re-plan the remaining sequence using the AI Command Bar.
+            {blockingDamagedPanels.length > 0 && (
+              <div className="assembly-blocked__damaged-list" style={{ marginTop: '20px', textAlign: 'left', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', padding: '16px', borderRadius: '8px' }}>
+                <p style={{ fontWeight: '600', color: '#f87171', marginBottom: '8px' }}>
+                  The following panel(s) must be replaced and installed first:
+                </p>
+                <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: 0 }}>
+                  {blockingDamagedPanels.map((p) => (
+                    <li key={p.id} style={{ color: '#9ca3af', marginBottom: '4px' }}>
+                      <strong style={{ color: '#e5e7eb' }}>{p.id}</strong> (Sequence #{p.install_sequence}) — <span style={{ color: '#f87171', textTransform: 'uppercase', fontSize: '0.85em', fontWeight: 'bold' }}>Damaged</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <p className="assembly-blocked__note" style={{ marginTop: '24px', fontSize: '0.9rem', color: '#9ca3af', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
+              Please notify the Production Manager to commission a replacement and re-plan the sequence using the AI Command Bar.
             </p>
           </div>
         </div>

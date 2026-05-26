@@ -5,10 +5,10 @@
 
 import { useState } from 'react';
 import { generateAIPlan } from '../../api/client';
-import type { Stack } from '../../types';
+import type { AIPlanResponse } from '../../api/client';
 
 interface CommandBarProps {
-  onPlanGenerated: (stacks: Stack[], reasoning: string) => void;
+  onPlanGenerated: (response: AIPlanResponse) => void;
 }
 
 export default function CommandBar({ onPlanGenerated }: CommandBarProps) {
@@ -25,7 +25,7 @@ export default function CommandBar({ onPlanGenerated }: CommandBarProps) {
 
     try {
       const result = await generateAIPlan(command.trim());
-      onPlanGenerated(result.stacks, result.reasoning);
+      onPlanGenerated(result);
       setCommand('');
     } catch (err: any) {
       setError(err.message);

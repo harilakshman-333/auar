@@ -1,6 +1,7 @@
 // ──────────────────────────────────────────────
 // Production Manager — Delivery Manifest View
 // Shows planned stacks with ordered panels inside
+// Supports pending (proposed) vs committed display
 // ──────────────────────────────────────────────
 
 import type { Stack, Panel } from '../../types';
@@ -9,6 +10,8 @@ interface DeliveryManifestProps {
   stacks: Stack[];
   panels: Panel[];
   reasoning: string | null;
+  isPending?: boolean;
+  dependencies?: Record<string, { locked: boolean }>;
 }
 
 function getPanelTypeColor(type: string): string {
@@ -35,6 +38,8 @@ export default function DeliveryManifest({
   stacks,
   panels,
   reasoning,
+  isPending = false,
+  dependencies,
 }: DeliveryManifestProps) {
   const panelMap = new Map(panels.map((p) => [p.id, p]));
 
@@ -67,9 +72,16 @@ export default function DeliveryManifest({
   }
 
   return (
-    <div className="manifest">
+    <div className={`manifest ${isPending ? 'manifest--pending' : ''}`}>
+      {isPending && (
+        <div className="manifest__pending-banner">
+          <span className="manifest__pending-icon">📋</span>
+          <span>PROPOSED PLAN — Review and approve below</span>
+        </div>
+      )}
+
       {reasoning && (
-        <div className="manifest__reasoning">
+        <div className={`manifest__reasoning ${isPending ? 'manifest__reasoning--pending' : ''}`}>
           <div className="manifest__reasoning-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22" />
@@ -91,7 +103,7 @@ export default function DeliveryManifest({
 
           <div className="manifest__stacks">
             {dayGroups[day].map((stack) => (
-              <div key={stack.id} className="manifest__stack">
+              <div key={stack.id} className={`manifest__stack ${isPending ? 'manifest__stack--pending' : ''}`}>
                 <div className="manifest__stack-header">
                   <div className="manifest__stack-title">
                     <span className="manifest__stack-id">{stack.id}</span>
@@ -136,16 +148,18 @@ export default function DeliveryManifest({
                 <div className="manifest__panels">
                   {stack.panelIds.map((pid, idx) => {
                     const panel = panelMap.get(pid);
+                    const isLocked = dependencies?.[pid]?.locked ?? false;
                     return (
                       <div
                         key={pid}
                         className={`manifest__panel ${
                           idx === 0 ? 'manifest__panel--top' : ''
-                        }`}
+                        } ${isLocked ? 'manifest__panel--locked' : ''}`}
                       >
                         <span className="manifest__panel-order">
                           {idx === 0 ? '▲ TOP' : idx + 1}
                         </span>
+                        {isLocked && <span className="manifest__panel-lock" title="Dependency locked">🔒</span>}
                         <span
                           className="manifest__panel-type-badge"
                           style={{
