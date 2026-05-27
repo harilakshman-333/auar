@@ -7,9 +7,8 @@ services:
       dockerfile: ./server/Dockerfile
     ports:
       - "3001:3001"
-    environment:
-      - PORT=3001
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - ./server/.env
     restart: always
 
   frontend:
