@@ -221,6 +221,16 @@ export default function PMDashboard() {
                 </div>
               ))}
             </div>
+            <div className="pm-dashboard__warning-note" style={{ marginTop: '12px', fontSize: '0.82rem', opacity: 0.95, borderTop: '1px dashed rgba(239,68,68,0.2)', paddingTop: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div>
+                  <strong>🏭 Commission Replacement:</strong> Registers a new duplicate replacement panel (with a <code>-R1</code> suffix) inside the factory production queue so it can be re-scheduled on a future stack/delivery day.
+                </div>
+                <div>
+                  <strong>↗ Push Blocked Panels:</strong> Automatically unschedules all downstream panels that require this damaged panel to be installed first, pushing them back to the unassigned pool to satisfy sequence dependencies.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
