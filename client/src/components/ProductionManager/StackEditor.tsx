@@ -12,6 +12,9 @@ interface StackEditorProps {
   panels: Panel[];
   onSave: (stacks: Stack[]) => Promise<void>;
   onCancel: () => void;
+  saveLabel?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 function getPanelTypeColor(type: string): string {
@@ -53,6 +56,9 @@ export default function StackEditor({
   panels,
   onSave,
   onCancel,
+  saveLabel,
+  title,
+  subtitle,
 }: StackEditorProps) {
   const panelMap = new Map(panels.map((p) => [p.id, p]));
 
@@ -229,7 +235,7 @@ export default function StackEditor({
   return (
     <div className="stack-editor" id="stack-editor-view">
       <div className="stack-editor__toolbar">
-        <h3>✏️ Manual Edit Mode</h3>
+        <h3>{title ?? '✏️ Manual Edit Mode'}</h3>
         <div className="stack-editor__toolbar-buttons">
           <button
             className="stack-editor__cancel-btn"
@@ -244,7 +250,7 @@ export default function StackEditor({
             disabled={saving}
             id="save-manual-stacks-btn"
           >
-            {saving ? 'Saving…' : '✓ Save Changes'}
+            {saving ? 'Saving…' : (saveLabel ?? '✓ Save Changes')}
           </button>
         </div>
       </div>
@@ -258,7 +264,7 @@ export default function StackEditor({
       )}
 
       <p className="stack-editor__hint">
-        Drag panels between stacks or back to the Unassigned Pool on the left. The system will auto-insert in sequence order and reject invalid LIFO moves.
+        {subtitle ?? 'Drag panels between stacks or back to the Unassigned Pool on the left. The system will auto-insert in sequence order and reject invalid LIFO moves.'}
       </p>
 
       <div className="stack-editor__layout">

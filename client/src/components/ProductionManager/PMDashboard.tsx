@@ -31,8 +31,11 @@ export default function PMDashboard() {
   const [pendingReasoning, setPendingReasoning] = useState<string | null>(null);
   const [approving, setApproving] = useState(false);
 
-  // Manual edit mode
+  // Manual edit mode (for committed stacks)
   const [editMode, setEditMode] = useState(false);
+
+  // Pending plan edit mode (for AI-proposed plan before approval)
+  const [editPendingMode, setEditPendingMode] = useState(false);
 
   // Factory order print mode
   const [showFactoryOrder, setShowFactoryOrder] = useState(false);
@@ -92,6 +95,14 @@ export default function PMDashboard() {
   const handleDiscardPlan = () => {
     setPendingPlan(null);
     setPendingReasoning(null);
+    setEditPendingMode(false);
+  };
+
+  // ── Save Edits to Pending Plan (before approval) ───
+  const handleSavePendingEdits = async (editedStacks: Stack[]) => {
+    // Just update the pendingPlan in memory — don't commit yet
+    setPendingPlan(editedStacks);
+    setEditPendingMode(false);
   };
 
   // ── Commission Replacement ─────────────────
@@ -215,11 +226,11 @@ export default function PMDashboard() {
       )}
 
       {/* Plan Approval Bar */}
-      {pendingPlan && (
+      {pendingPlan && !editPendingMode && (
         <div className="plan-preview-bar">
           <div className="plan-preview-bar__text">
             <span className="plan-preview-bar__icon">📋</span>
-            <span>AI has proposed a new delivery plan. Review below and approve or discard.</span>
+            <span><strong>PROPOSED PLAN</strong> — Review and approve below</span>
           </div>
           <div className="plan-preview-bar__buttons">
             <button
@@ -228,6 +239,13 @@ export default function PMDashboard() {
               disabled={approving}
             >
               ✕ Discard
+            </button>
+            <button
+              className="plan-preview-bar__edit"
+              onClick={() => setEditPendingMode(true)}
+              disabled={approving}
+            >
+              ✏️ Edit Plan
             </button>
             <button
               className="plan-preview-bar__approve"
@@ -244,7 +262,19 @@ export default function PMDashboard() {
 
       <div className="pm-dashboard__grid">
         <div className="pm-dashboard__manifest">
-          {editMode ? (
+          {editPendingMode && pendingPlan ? (
+            // Drag-and-drop editor for the AI-proposed plan (before approval)
+            <StackEditor
+              stacks={pendingPlan}
+              panels={panels}
+              onSave={handleSavePendingEdits}
+              onCancel={() => setEditPendingMode(false)}
+              saveLabel="💾 Save to Plan"
+              title="✏️ Editing Proposed Plan"
+              subtitle="Drag panels between stacks. Click &quot;Save to Plan&quot; when done -- you can still Approve or Discard after."
+            />
+          ) : editMode ? (
+            // Drag-and-drop editor for committed stacks
             <StackEditor
               stacks={stacks}
               panels={panels}
