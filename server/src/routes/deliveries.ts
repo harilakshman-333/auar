@@ -118,12 +118,12 @@ When generating a plan_update:
         
         // Auto-sort proposed stacks by sequence number ascending to ensure correct LIFO order
         for (const stack of proposedStacks) {
-          stack.panelIds.sort((a, b) => {
+          stack.panelIds.sort((a: string, b: string) => {
             const pa = getPanelById(a);
             const pb = getPanelById(b);
             return (pa?.install_sequence ?? 0) - (pb?.install_sequence ?? 0);
           });
-          stack.total_weight_kg = stack.panelIds.reduce((sum, pid) => {
+          stack.total_weight_kg = stack.panelIds.reduce((sum: number, pid: string) => {
             const p = getPanelById(pid);
             return sum + (p?.weight_kg ?? 0);
           }, 0);
@@ -227,13 +227,13 @@ router.put('/stacks', (req: Request, res: Response) => {
 
     // Auto-sort to be 100% robust against LIFO violations
     for (const stack of editedStacks) {
-      stack.panelIds.sort((a, b) => {
+      stack.panelIds.sort((a: string, b: string) => {
         const pa = getPanelById(a);
         const pb = getPanelById(b);
         return (pa?.install_sequence ?? 0) - (pb?.install_sequence ?? 0);
       });
       
-      stack.total_weight_kg = stack.panelIds.reduce((sum, pid) => {
+      stack.total_weight_kg = stack.panelIds.reduce((sum: number, pid: string) => {
         const p = getPanelById(pid);
         return sum + (p?.weight_kg ?? 0);
       }, 0);

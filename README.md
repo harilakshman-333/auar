@@ -8,6 +8,33 @@ A full-stack application for managing and optimizing the delivery of constructio
 
 ## Setup Instructions
 
+### Option A: Running with Docker Compose (Recommended - One-Shot Setup)
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd auar
+   ```
+
+2. **Configure your OpenAI API Key**
+   Make sure you have your OpenAI API Key exported in your environment, or create a `.env` file in the project root:
+   ```bash
+   echo "OPENAI_API_KEY=your_openai_key_here" > .env
+   ```
+
+3. **Launch with Docker Compose**
+   ```bash
+   docker-compose up --build
+   ```
+
+4. **Access the App**
+   - The frontend will be available at `http://localhost:8080`
+   - The backend runs on `http://localhost:3001`
+
+---
+
+### Option B: Running Locally
+
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
